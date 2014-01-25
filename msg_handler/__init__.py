@@ -1,11 +1,13 @@
 import logging
 from flask import Flask
 from redis import Redis
+from flask.ext.sqlalchemy import SQLAlchemy
 
 redis = Redis()
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py', silent=True)
+db = SQLAlchemy(app)
 
 # load log level from config
 LOG_LEVEL = app.config['LOG_LEVEL']
@@ -29,4 +31,8 @@ file_handler.setLevel(LOG_LEVEL)
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
+import msg_handler.admin
 import msg_handler.views
+
+# TODO: remove this call
+msg_handler.admin.rebuild_db()

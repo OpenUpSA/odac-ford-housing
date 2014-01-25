@@ -1,4 +1,4 @@
-from flask import request, make_response, render_template
+from flask import request, make_response, render_template, redirect
 from msg_handler import app, redis
 from msg_handler.menu import menu
 import json
@@ -165,11 +165,10 @@ def generate_output(user_id, selected_item=None):
 @app.route('/')
 def index():
     """
-    Basic index view, listing online users.
+    Redirect to admin.
     """
 
-    msg = 'Online: %s' % ', '.join(get_online_users())
-    return make_response(msg)
+    return redirect('admin/')
 
 
 @app.route('/message/', methods=['GET', 'POST'])
@@ -179,8 +178,6 @@ def message():
     """
 
     logger.debug("MESSAGE endpoint called")
-
-    # TODO: filter out service messages, such as "content": "state: wait_ussrc"
 
     if request.method == 'POST':
 

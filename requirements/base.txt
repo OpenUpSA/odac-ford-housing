@@ -3,3 +3,7 @@ simplejson
 requests==2.0.1
 redis
 hiredis
+SQLAlchemy==0.8.2
+Flask-SQLAlchemy==1.0
+Flask-Admin==1.0.7
+Flask-Login==0.2.7
