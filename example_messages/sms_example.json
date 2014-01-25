@@ -1,0 +1,46 @@
+{
+    "transport_name": "ambient_go_smpp_transport",
+    "transport_metadata": {},
+    "group": null,
+    "from_addr": "+27738257732",
+    "timestamp": "2014-01-24 12:56:45.481038",
+    "to_addr": "2783930028010243",
+    "content": "Another test reply",
+    "routing_metadata": {
+        "go_hops": [
+            [
+                [
+                    "TRANSPORT_TAG:longcode:default10243",
+                    "default"
+                ],
+                [
+                    "CONVERSATION:http_api:f7cf6033331e43b5bf84be6841ef2e65",
+                    "default"
+                ]
+            ]
+        ],
+        "endpoint_name": "default"
+    },
+    "message_version": "20110921",
+    "transport_type": "sms",
+    "helper_metadata": {
+        "go": {
+            "conversation_type": "http_api",
+            "user_account": "###",
+            "conversation_key": "f7cf6033331e43b5bf84be6841ef2e65"
+        },
+        "tag": {
+            "tag": [
+                "longcode",
+                "default10243"
+            ]
+        },
+        "optout": {
+            "optout": false
+        }
+    },
+    "in_reply_to": null,
+    "session_event": null,
+    "message_id": "67f12baf5ff5426e80d7c15403227241",
+    "message_type": "user_message"
+}

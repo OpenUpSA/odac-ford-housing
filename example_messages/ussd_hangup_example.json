@@ -1,0 +1,49 @@
+{
+    "transport_name": "vumi_starcode_transport", 
+    "transport_metadata": {}, 
+    "group": null, 
+    "from_addr": "+27738257652", 
+    "timestamp": "2014-01-25 07:31:13.806214", 
+    "to_addr": "*120*8864*1257#", 
+    "content": "state: wait_ussrc", 
+    "routing_metadata": {
+        "go_hops": [
+            [
+                [
+                    "TRANSPORT_TAG:vumi_starcode:*120*8864*1257#", 
+                    "default"
+                ], 
+                [
+                    "CONVERSATION:http_api:e0f8163ba0f9490899b1b36175e84105", 
+                    "default"
+                ]
+            ]
+        ], 
+        "endpoint_name": "default"
+    }, 
+    "message_version": "20110921", 
+    "transport_type": "ussd", 
+    "helper_metadata": {
+        "go": {
+            "conversation_type": "http_api", 
+            "user_account": "b637a80d56f64121af54369e7b027160", 
+            "conversation_key": "e0f8163ba0f9490899b1b36175e84105"
+        }, 
+        "tag": {
+            "tag": [
+                "vumi_starcode", 
+                "*120*8864*1257#"
+            ]
+        }, 
+        "truteq": {
+            "genfields": {}
+        }, 
+        "optout": {
+            "optout": false
+        }
+    }, 
+    "in_reply_to": null, 
+    "session_event": "close", 
+    "message_id": "bc8b1e0891404e73a0320ae8acaf3f30", 
+    "message_type": "user_message"
+}
