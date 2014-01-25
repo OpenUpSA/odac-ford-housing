@@ -1,9 +1,11 @@
 from msg_handler import db
 from sqlalchemy.orm import backref
 
+
 # Create user model. For simplicity, it will store passwords in plain text.
 # Obviously that's not right thing to do in real world application.
 class User(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
@@ -27,3 +29,14 @@ class User(db.Model):
     # Required for administrative interface
     def __unicode__(self):
         return self.username
+
+
+class Message(db.Model):
+
+    message_id = db.Column(db.Integer, primary_key=True)
+    msg_type = db.Column(db.String(4))  # either 'ussd' or 'sms'
+    content = db.Column(db.String(180))
+    vumi_message_id = db.Column(db.String(100))
+    conversation_key = db.Column(db.String(100))
+    from_addr = db.Column(db.String(100))
+    datetime = db.Column(db.DateTime())

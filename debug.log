@@ -1,0 +1,59 @@
+2014-01-25 16:25:25,578 DEBUG: MESSAGE endpoint called [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:180]
+2014-01-25 16:25:25,606 DEBUG: {
+    "msg_type": "ussd", 
+    "from_addr": "+27738257667", 
+    "timestamp": "2013-12-02 06:28:07.430549", 
+    "conversation_key": "e0f8163ba0f9490899b1b36175e84105", 
+    "content": "1", 
+    "message_id": "3f674c5ee67f44a5bf75c7a0f3721038"
+} [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:189]
+2014-01-25 16:25:25,608 DEBUG: PREVIOUS MENU: None [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:109]
+2014-01-25 16:25:25,608 DEBUG: I've been raped / sexually abused what do I do now?
+0: Back
+1: Important Information
+2: Reporting
+3: Medical Treatment
+4: Evidence
+5: Alcohol / Drugs [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:202]
+2014-01-25 16:25:25,616 DEBUG: MESSAGE endpoint called [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:180]
+2014-01-25 16:25:25,616 DEBUG: {
+    "msg_type": "sms", 
+    "from_addr": "+27738257732", 
+    "timestamp": "2014-01-24 12:56:45.481038", 
+    "conversation_key": "f7cf6033331e43b5bf84be6841ef2e65", 
+    "content": "test", 
+    "message_id": "67f12baf5ff5426e80d7c15403227241"
+} [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:189]
+2014-01-25 16:25:25,620 ERROR: reply() takes at least 4 arguments (2 given) [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:209]
+Traceback (most recent call last):
+  File "/Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py", line 207, in message
+    msg.reply("Thanks you for submitting your query. It will be attended to as soon as possible.")
+TypeError: reply() takes at least 4 arguments (2 given)
+2014-01-25 16:28:55,566 DEBUG: MESSAGE endpoint called [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:180]
+2014-01-25 16:28:55,570 DEBUG: {
+    "msg_type": "ussd", 
+    "from_addr": "+27738257667", 
+    "timestamp": "2013-12-02 06:28:07.430549", 
+    "conversation_key": "e0f8163ba0f9490899b1b36175e84105", 
+    "content": "1", 
+    "message_id": "3f674c5ee67f44a5bf75c7a0f3721038"
+} [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:189]
+2014-01-25 16:28:55,572 DEBUG: PREVIOUS MENU: 0 [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:109]
+2014-01-25 16:28:55,572 DEBUG: Important Information
+0: Back
+2: Next
+Make sure that you are safe. You can call the police to come to help you [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:202]
+2014-01-25 16:28:55,578 DEBUG: MESSAGE endpoint called [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:180]
+2014-01-25 16:28:55,578 DEBUG: {
+    "msg_type": "sms", 
+    "from_addr": "+27738257732", 
+    "timestamp": "2014-01-24 12:56:45.481038", 
+    "conversation_key": "f7cf6033331e43b5bf84be6841ef2e65", 
+    "content": "test", 
+    "message_id": "67f12baf5ff5426e80d7c15403227241"
+} [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:189]
+2014-01-25 16:28:55,593 ERROR: reply() takes at least 4 arguments (2 given) [in /Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py:209]
+Traceback (most recent call last):
+  File "/Users/petrus/Desktop/code4sa/odac-ford-housing/msg_handler/views.py", line 207, in message
+    msg.reply("Thanks you for submitting your query. It will be attended to as soon as possible.")
+TypeError: reply() takes at least 4 arguments (2 given)

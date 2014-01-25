@@ -33,6 +33,3 @@ logger.addHandler(file_handler)
 
 import msg_handler.admin
 import msg_handler.views
-
-# TODO: remove this call
-msg_handler.admin.rebuild_db()

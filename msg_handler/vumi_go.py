@@ -2,15 +2,16 @@ import json
 from datetime import datetime
 from msg_handler import logger
 import requests
-
+from msg_handler.models import Message
+from msg_handler import db
 
 class VumiMessage():
 
     def __init__(self, msg_dict):
         try:
+            self.message_id = msg_dict['message_id']
             self.msg_type = msg_dict['transport_type']  # either 'ussd' or 'sms'
             self.content = msg_dict['content']
-            self.message_id = msg_dict['message_id']
             self.conversation_key = msg_dict['helper_metadata']['go']['conversation_key']
             self.from_addr = msg_dict['from_addr']
             self.timestamp = msg_dict['timestamp']  # e.g. "2013-12-02 06:28:07.430549"
@@ -32,6 +33,20 @@ class VumiMessage():
         if not r.status_code == 200:
             logger.error("HTTP error encountered while trying to send message though VumiGo API.")
         return r.text
+
+    def save(self):
+
+        msg = Message()
+        msg.vumi_message_id = self.message_id
+        msg.msg_type = self.msg_type
+        msg.content = self.content
+        msg.conversation_key = self.conversation_key
+        msg.from_addr = self.from_addr
+        msg.timestamp = self.timestamp
+        msg.datetime = self.datetime
+        db.session.add(msg)
+        db.session.commit()
+        return
 
     def __repr__(self):
 

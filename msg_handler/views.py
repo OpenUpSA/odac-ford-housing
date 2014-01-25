@@ -174,7 +174,7 @@ def index():
 @app.route('/message/', methods=['GET', 'POST'])
 def message():
     """
-    Handle incoming USSD messages, passed as HTTP requests via the vumi HTTP API.
+    Handle incoming messages, passed as HTTP requests via the vumi HTTP API.
     """
 
     logger.debug("MESSAGE endpoint called")
@@ -188,19 +188,23 @@ def message():
         else:
             logger.debug(msg)
             try:
-                user_id = msg.from_addr  # user's cellphone number
-                content = msg.content  # selected menu item, if any
-                mark_online(user_id)
-                selected_item = None
-                try:
-                    selected_item = int(content)
-                except (ValueError, TypeError):
-                    pass
-                reply_content = generate_output(user_id, selected_item)
-                if app.debug:
-                    logger.debug(reply_content)
-                else:
-                    msg.reply(reply_content, ACCESS_TOKEN, ACCOUNT_KEY)
+                if msg.msg_type == "ussd":
+                    user_id = msg.from_addr  # user's cellphone number
+                    content = msg.content  # selected menu item, if any
+                    mark_online(user_id)
+                    selected_item = None
+                    try:
+                        selected_item = int(content)
+                    except (ValueError, TypeError):
+                        pass
+                    reply_content = generate_output(user_id, selected_item)
+                    if app.debug:
+                        logger.debug(reply_content)
+                    else:
+                        msg.reply(reply_content, ACCESS_TOKEN, ACCOUNT_KEY)
+                elif msg.msg_type == "sms":
+                    msg.save()
+                    msg.reply("Thanks you for submitting your query. It will be attended to as soon as possible.")
             except Exception as e:
                 logger.exception(e)
                 pass

@@ -7,8 +7,8 @@ import requests
 class MsgHandlerTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.base_url = 'http://localhost:5000/'
-        # self.base_url = 'http://ec2-54-194-198-122.eu-west-1.compute.amazonaws.com/'
+        # self.base_url = 'http://localhost:5000/'
+        self.base_url = 'http://ford-housing.demo4sa.org/'
 
     def send_msg(self, msg_type="USSD", content="1"):
         filename = 'example_messages/ussd_example.json'
@@ -25,26 +25,12 @@ class MsgHandlerTestCase(unittest.TestCase):
         assert r.status_code == 200
         return r.text
 
-
     def test_message_handler(self):
         """
         Check the contents of the response, after hitting the server with a message.
         """
         assert 'OK' in self.send_msg("USSD", "1")
         assert 'OK' in self.send_msg("SMS", "test")
-
-
-    def test_populated_cache(self):
-        """
-        Check that a user's details are retained in the cache, after sending a message.
-        """
-        tmp = self.send_msg("USSD", "1")
-        print tmp
-
-        r = requests.get(self.base_url)
-        assert r.status_code == 200
-        print r.text
-        assert '+27738257667' in r.text
 
 
 if __name__ == '__main__':
