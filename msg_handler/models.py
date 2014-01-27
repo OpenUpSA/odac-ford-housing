@@ -40,3 +40,16 @@ class Message(db.Model):
     conversation_key = db.Column(db.String(100))
     from_addr = db.Column(db.String(100))
     datetime = db.Column(db.DateTime())
+
+
+class Response(db.Model):
+
+    response_id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(180))
+    datetime = db.Column(db.DateTime())
+
+    message_id = db.Column(db.Integer, db.ForeignKey('message.message_id'))
+    message = db.relationship('Message', backref=backref("responses", order_by=datetime))
+
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # user = db.relationship('User')

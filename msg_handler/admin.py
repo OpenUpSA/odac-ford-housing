@@ -1,5 +1,6 @@
 from flask import Flask, url_for, redirect, render_template, request
 from wtforms import form, fields, validators
+from wtforms.fields import SelectField, TextAreaField
 from flask.ext import admin, login
 from flask.ext.admin.contrib import sqla
 from flask.ext.admin import helpers, expose
@@ -101,6 +102,14 @@ class MyAdminIndexView(admin.AdminIndexView):
         return redirect(url_for('.index'))
 
 
+class MessageView(MyModelView):
+
+    can_create = False
+    column_list = ('datetime', 'from_addr', 'content')
+    form_overrides = dict(content=TextAreaField, )
+    inline_models = [(Response, dict(form_label='Reply', ))]
+
+
 
 # Initialize flask-login
 init_login()
@@ -110,4 +119,4 @@ admin = admin.Admin(app, 'Ford Housing', index_view=MyAdminIndexView(), base_tem
 
 # Add views
 admin.add_view(MyModelView(User, db.session))
-admin.add_view(MyModelView(Message, db.session))
+admin.add_view(MessageView(Message, db.session))
