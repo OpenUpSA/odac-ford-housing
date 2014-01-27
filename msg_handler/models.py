@@ -31,10 +31,9 @@ class User(db.Model):
         return self.username
 
 
-class Message(db.Model):
+class Query(db.Model):
 
-    message_id = db.Column(db.Integer, primary_key=True)
-    msg_type = db.Column(db.String(4))  # either 'ussd' or 'sms'
+    query_id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(180))
     vumi_message_id = db.Column(db.String(100), unique=True)
     conversation_key = db.Column(db.String(100))
@@ -48,8 +47,8 @@ class Response(db.Model):
     content = db.Column(db.String(180))
     datetime = db.Column(db.DateTime())
 
-    message_id = db.Column(db.Integer, db.ForeignKey('message.message_id'))
-    message = db.relationship('Message', backref=backref("responses", order_by=datetime))
+    query_id = db.Column(db.Integer, db.ForeignKey('query.query_id'))
+    query = db.relationship('Query', backref=backref("responses", order_by=datetime))
 
     # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     # user = db.relationship('User')

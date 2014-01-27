@@ -102,7 +102,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         return redirect(url_for('.index'))
 
 
-class MessageView(MyModelView):
+class QueryView(MyModelView):
 
     can_create = False
     column_list = ('datetime', 'from_addr', 'content')
@@ -119,4 +119,4 @@ admin = admin.Admin(app, 'Ford Housing', index_view=MyAdminIndexView(), base_tem
 
 # Add views
 admin.add_view(MyModelView(User, db.session))
-admin.add_view(MessageView(Message, db.session))
+admin.add_view(QueryView(Query, db.session))

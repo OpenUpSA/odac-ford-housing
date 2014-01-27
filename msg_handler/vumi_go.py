@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from msg_handler import logger
 import requests
-from msg_handler.models import Message
+from msg_handler.models import Query, Response
 from msg_handler import db
 from msg_handler import app
 
@@ -39,13 +39,12 @@ class VumiMessage():
             logger.debug("REPLY \n" + json.dumps(payload, indent=4))
             return
 
-    def save(self):
+    def save_query(self):
 
-        msg = Message.query.filter(Message.vumi_message_id == self.message_id).first()
+        msg = Query.query.filter(Query.vumi_message_id == self.message_id).first()
         if msg is None:
-            msg = Message()
+            msg = Query()
         msg.vumi_message_id = self.message_id
-        msg.msg_type = self.msg_type
         msg.content = self.content
         msg.conversation_key = self.conversation_key
         msg.from_addr = self.from_addr
