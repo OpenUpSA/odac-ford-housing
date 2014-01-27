@@ -1,0 +1,5 @@
+{% extends 'admin/model/list.html' %}
+
+{% macro render_date(model, column) %}
+    {{ model.datetime|string|truncate(19, true, "") }}
+{% endmacro %}

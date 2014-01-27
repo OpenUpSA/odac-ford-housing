@@ -4,6 +4,8 @@ from wtforms.fields import SelectField, TextAreaField
 from flask.ext import admin, login
 from flask.ext.admin.contrib import sqla
 from flask.ext.admin import helpers, expose
+from flask.ext.admin.model.template import macro
+from flask.ext.admin.form import rules
 from msg_handler import app, db, logger
 from msg_handler.models import *
 
@@ -105,8 +107,25 @@ class MyAdminIndexView(admin.AdminIndexView):
 
 class QueryView(MyModelView):
 
+    # disable manual editing / deletion of messages
     can_create = False
-    column_list = ('datetime', 'from_addr', 'content')
+    can_edit = False
+    can_delete = False
+    column_list = (
+        'datetime',
+        'from_addr',
+        'content'
+    )
+    column_labels = dict(
+        datetime='Date',
+        from_addr='From',
+        content='Message'
+    )
+    column_formatters = dict(
+        datetime=macro('render_date')
+    )
+    column_default_sort = ('user', True)  # Descending order
+    list_template = 'query_list_template.html'
     form_overrides = dict(content=TextAreaField, )
     inline_models = [(Response, dict(form_label='Reply', ))]
 
