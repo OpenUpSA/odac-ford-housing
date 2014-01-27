@@ -1,14 +1,30 @@
 {% extends 'admin/base.html' %}
 
+{% block head_css %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="/static/styles.css">
+{% endblock %}
+
 {% block access_control %}
 {% if current_user.is_authenticated() %}
 <div class="btn-group pull-right">
     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="icon-user"></i> {{ current_user.login }} <span class="caret"></span>
+        <i class="icon-user"></i> {{ current_user.email }} <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
         <li><a href="{{ url_for('admin.logout_view') }}">Log out</a></li>
     </ul>
 </div>
 {% endif %}
+{% endblock %}
+
+{% block tail %}
+<div class="container" id="footer">
+    <div class="col-lg-12">
+        <hr>
+        <a class="tiny-logo" href="http://www.code4sa.org/" target="_blank"><img id="logo-code4sa" src="/static/images/code4sa-logo-small.png"></a>
+        <a class="tiny-logo" href="http://www.opendemocracy.org.za/" target="_blank"><img id="logo-odac" src="/static/images/odac-logo-small.gif"></a>
+        <p id="copyright"><small>Copyright &copy; Open Democracy Advice Centre 2014</small></p>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,36 @@
+body{
+    background-image: url('/static/patterns/cream_pixels_smooth.png');
+}
+
+#footer{
+    height: 100px;
+}
+
+.tiny-logo{
+    float: right;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+#logo-odac{
+    margin-top: 5px;
+}
+
+#copyright{
+    padding-top: 10px;
+}
+
+#map-container{
+    width: 500px;
+    height: 500px;
+    background-color: #eee;
+}
+
+.project-item{
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.profile-pic{
+    padding-top: 15px;
+}

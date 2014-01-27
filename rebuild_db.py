@@ -6,7 +6,7 @@ def rebuild_db():
 
     db.drop_all()
     db.create_all()
-    test_user = User(login="admin", password="test")
+    test_user = User(email="admin", password="test")
     db.session.add(test_user)
 
     db.session.commit()
