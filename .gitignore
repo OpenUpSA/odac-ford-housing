@@ -35,5 +35,6 @@ nosetests.xml
 .project
 .pydevproject
 
+instance/ford-housing.db
 debug.log
 .idea/*

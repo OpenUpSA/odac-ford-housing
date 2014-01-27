@@ -19,7 +19,7 @@ class LoginForm(form.Form):
         if user is None:
             raise validators.ValidationError('Invalid user')
 
-        if user.password != self.password.data:
+        if user.password != hash(self.password.data):
             raise validators.ValidationError('Invalid password')
 
     def get_user(self):
@@ -27,13 +27,12 @@ class LoginForm(form.Form):
 
 
 class RegistrationForm(form.Form):
-    login = fields.TextField(validators=[validators.required()])
-    email = fields.TextField()
+    email = fields.TextField(validators=[validators.required()])
     password = fields.PasswordField(validators=[validators.required()])
 
     def validate_login(self, field):
-        if db.session.query(User).filter_by(login=self.login.data).count() > 0:
-            raise validators.ValidationError('Duplicate username')
+        if db.session.query(User).filter_by(email=self.email.data).count() > 0:
+            raise validators.ValidationError('Duplicate users')
 
 
 # Initialize flask-login
@@ -84,6 +83,8 @@ class MyAdminIndexView(admin.AdminIndexView):
         if helpers.validate_form_on_submit(form):
             user = User()
 
+            # hash password, before populating User object
+            form.password.data = hash(form.password.data)
             form.populate_obj(user)
 
             db.session.add(user)
