@@ -26,7 +26,7 @@ class User(db.Model):
 
     # Required for administrative interface
     def __unicode__(self):
-        return self.username
+        return self.email
 
 
 class Query(db.Model):
@@ -42,11 +42,11 @@ class Query(db.Model):
 class Response(db.Model):
 
     response_id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(180))
+    content = db.Column(db.String(180), nullable=False)
     datetime = db.Column(db.DateTime())
 
     query_id = db.Column(db.Integer, db.ForeignKey('query.query_id'))
     query = db.relationship('Query', backref=backref("responses", order_by=datetime))
 
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    # user = db.relationship('User')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User')

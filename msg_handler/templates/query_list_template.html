@@ -3,3 +3,13 @@
 {% macro render_date(model, column) %}
     {{ model.datetime|string|truncate(19, true, "") }}
 {% endmacro %}
+
+{% macro render_responses(model, column) %}
+    {% for response in model.responses %}
+        <p>
+            {{ response.user.email }}<br>
+            <strong>{{ response.content }}</strong>
+        </p>
+    {% endfor %}
+    <a class="btn" href="/admin/responseview/new/">new response</a>
+{% endmacro %}

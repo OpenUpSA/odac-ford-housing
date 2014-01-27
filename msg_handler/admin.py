@@ -114,7 +114,8 @@ class QueryView(MyModelView):
     column_list = (
         'datetime',
         'from_addr',
-        'content'
+        'content',
+        'responses'
     )
     column_labels = dict(
         datetime='Date',
@@ -122,13 +123,28 @@ class QueryView(MyModelView):
         content='Message'
     )
     column_formatters = dict(
-        datetime=macro('render_date')
+        datetime=macro('render_date'),
+        responses=macro('render_responses')
     )
-    column_default_sort = ('user', True)  # Descending order
+    column_default_sort = ('from_addr', True)  # Descending order
     list_template = 'query_list_template.html'
     form_overrides = dict(content=TextAreaField, )
     inline_models = [(Response, dict(form_label='Reply', ))]
 
+
+class ResponseView(MyModelView):
+
+    create_template = 'response_create_template.html'
+
+
+class UserView(MyModelView):
+
+    can_create = False
+    column_list = (
+        'email',
+        'first_name',
+        'last_name'
+    )
 
 
 # Initialize flask-login
@@ -138,5 +154,6 @@ init_login()
 admin = admin.Admin(app, 'Ford Housing', index_view=MyAdminIndexView(), base_template='my_master.html')
 
 # Add views
-admin.add_view(MyModelView(User, db.session))
+admin.add_view(UserView(User, db.session))
+admin.add_view(ResponseView(Response, db.session))
 admin.add_view(QueryView(Query, db.session))

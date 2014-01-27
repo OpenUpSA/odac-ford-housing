@@ -1,0 +1,9 @@
+{% extends 'admin/model/create.html' %}
+
+{% block body %}
+    <h2>Send SMS response:</h2>
+  {% call lib.form_tag(form) %}
+      {{ lib.render_form_fields(form, form_opts=form_opts, form_rules=form_rules) }}
+      {{ lib.render_form_buttons(return_url, extra()) }}
+  {% endcall %}
+{% endblock %}
