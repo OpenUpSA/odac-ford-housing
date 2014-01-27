@@ -36,7 +36,7 @@ class Message(db.Model):
     message_id = db.Column(db.Integer, primary_key=True)
     msg_type = db.Column(db.String(4))  # either 'ussd' or 'sms'
     content = db.Column(db.String(180))
-    vumi_message_id = db.Column(db.String(100))
+    vumi_message_id = db.Column(db.String(100), unique=True)
     conversation_key = db.Column(db.String(100))
     from_addr = db.Column(db.String(100))
     datetime = db.Column(db.DateTime())

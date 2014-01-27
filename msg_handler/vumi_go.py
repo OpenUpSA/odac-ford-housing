@@ -4,6 +4,7 @@ from msg_handler import logger
 import requests
 from msg_handler.models import Message
 from msg_handler import db
+from msg_handler import app
 
 class VumiMessage():
 
@@ -28,15 +29,21 @@ class VumiMessage():
             "content": content,
             "session_event": session_event,
             }
-        r = requests.put(message_url, auth=(account_key, access_token),
-                     data=json.dumps(payload))
-        if not r.status_code == 200:
-            logger.error("HTTP error encountered while trying to send message though VumiGo API.")
-        return r.text
+        if not app.debug:
+            r = requests.put(message_url, auth=(account_key, access_token),
+                         data=json.dumps(payload))
+            if not r.status_code == 200:
+                logger.error("HTTP error encountered while trying to send message though VumiGo API.")
+            return r.text
+        else:
+            logger.debug("REPLY \n" + json.dumps(payload, indent=4))
+            return
 
     def save(self):
 
-        msg = Message()
+        msg = Message.query.filter(Message.vumi_message_id == self.message_id).first()
+        if msg is None:
+            msg = Message()
         msg.vumi_message_id = self.message_id
         msg.msg_type = self.msg_type
         msg.content = self.content

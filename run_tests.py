@@ -7,8 +7,8 @@ import requests
 class MsgHandlerTestCase(unittest.TestCase):
 
     def setUp(self):
-        # self.base_url = 'http://localhost:5000/'
-        self.base_url = 'http://ford-housing.demo4sa.org/'
+        self.base_url = 'http://localhost:5000/'
+        # self.base_url = 'http://ford-housing.demo4sa.org/'
 
     def send_msg(self, msg_type="USSD", content="1"):
         filename = 'example_messages/ussd_example.json'

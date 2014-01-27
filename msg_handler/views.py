@@ -198,10 +198,7 @@ def message():
                     except (ValueError, TypeError):
                         pass
                     reply_content = generate_output(user_id, selected_item)
-                    if app.debug:
-                        logger.debug(reply_content)
-                    else:
-                        msg.reply(reply_content, ACCESS_TOKEN, ACCOUNT_KEY)
+                    msg.reply(reply_content, ACCESS_TOKEN, ACCOUNT_KEY)
                 elif msg.msg_type == "sms":
                     msg.save()
                     tmp = "Thanks you for submitting your query. It will be attended to as soon as possible."
