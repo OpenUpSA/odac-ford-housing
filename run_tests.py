@@ -35,3 +35,17 @@ class MsgHandlerTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+    # base_url = 'http://localhost:5000/'
+    #
+    # filename = 'example_messages/ussd_example.json'
+    # f = open(filename, 'r')
+    # msg = simplejson.loads(f.read())
+    # msg['content'] = 3
+    # msg_str = simplejson.dumps(msg)
+    #
+    # headers = {'content-type': 'application/json'}
+    # r = requests.post(base_url + 'message/', data=msg_str, headers=headers)
+    #
+    # assert r.status_code == 200
+    # print r.text

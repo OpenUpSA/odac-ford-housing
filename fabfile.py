@@ -214,6 +214,9 @@ def deploy():
     with settings(warn_only=True):
         sudo('rm /var/www/odac-ford-housing/debug.log*')
 
+    # ensure notification list exists
+    sudo('touch /var/www/odac-ford-housing/instance/notification_list.json')
+
     # ensure user www-data has access to the application folder
     sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
     sudo('chmod -R 775 /var/www/odac-ford-housing')

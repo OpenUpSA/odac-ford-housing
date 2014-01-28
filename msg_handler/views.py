@@ -199,6 +199,8 @@ def message():
                     except (ValueError, TypeError):
                         pass
                     reply_content = generate_output(user_id, selected_item)
+                    if "Your number has been added to the list." in reply_content:
+                        update_notification_list(msg.from_addr, "add")
                     msg.reply(reply_content, ACCESS_TOKEN, ACCOUNT_KEY)
                 elif msg.msg_type == "sms":
                     msg.save_query()
@@ -240,3 +242,36 @@ def response():
     msg.reply(content, ACCESS_TOKEN, ACCOUNT_KEY, session_event=None, user=user)
 
     return redirect('/admin/queryview/', code=302)
+
+
+def update_notification_list(number, add_or_remove="add"):
+    """
+    Add / Remove a user's number from the list of numbers to be notified when sending updates.
+    """
+
+    try:
+        # read list from JSON file
+        with app.open_instance_resource('notification_list.json', mode='r') as f:
+            try:
+                notification_list = json.loads(f.read())
+            except ValueError, e:
+                # start with clean list, if the file does not yet contain a list
+                notification_list = []
+                pass
+        # add / remove item
+        if add_or_remove == "add":
+            if not number in notification_list:
+                notification_list.append(number)
+        elif add_or_remove == "remove":
+            if number in notification_list:
+                i = notification_list.index(number)
+                notification_list = notification_list[0:i] + notification_list[i+1::]
+        # write updated list to file
+        with app.open_instance_resource('notification_list.json', mode='w') as f:
+            f.write(json.dumps(notification_list, indent=4))
+    except Exception, e:
+        if add_or_remove == "add":
+            logger.exception("Error saving number to the notification list.")
+        else:
+            logger.exception("Error removing number from the notification list.")
+    return

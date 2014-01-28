@@ -45,7 +45,7 @@ class VumiMessage():
             }
 
         # log response to db if this is a reply to an SMS query
-        if self.query_id:
+        if hasattr(self, 'query_id'):
             rsp = Response()
             rsp.query_id = self.query_id
             rsp.content = content
