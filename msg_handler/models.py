@@ -1,5 +1,7 @@
-from msg_handler import db
+from msg_handler import db, logger
 from sqlalchemy.orm import backref
+from sqlalchemy import event
+import datetime
 
 
 # Create user model.
@@ -36,14 +38,14 @@ class Query(db.Model):
     vumi_message_id = db.Column(db.String(100), unique=True)
     conversation_key = db.Column(db.String(100))
     from_addr = db.Column(db.String(100))
-    datetime = db.Column(db.DateTime())
+    datetime = db.Column(db.DateTime(), default=datetime.datetime.now)
 
 
 class Response(db.Model):
 
     response_id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(180), nullable=False)
-    datetime = db.Column(db.DateTime())
+    datetime = db.Column(db.DateTime(), default=datetime.datetime.now)
 
     query_id = db.Column(db.Integer, db.ForeignKey('query.query_id'))
     query = db.relationship('Query', backref=backref("responses", order_by=datetime))

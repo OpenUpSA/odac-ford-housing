@@ -201,7 +201,7 @@ def message():
                     msg.reply(reply_content, ACCESS_TOKEN, ACCOUNT_KEY)
                 elif msg.msg_type == "sms":
                     msg.save_query()
-                    tmp = "Thanks you for submitting your query. It will be attended to as soon as possible."
+                    tmp = "Thank you for submitting your query. It will be attended to as soon as possible."
                     msg.reply(tmp, ACCESS_TOKEN, ACCOUNT_KEY)
             except Exception as e:
                 logger.exception(e)

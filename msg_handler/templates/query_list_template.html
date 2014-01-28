@@ -1,15 +1,26 @@
 {% extends 'admin/model/list.html' %}
 
 {% macro render_date(model, column) %}
-    {{ model.datetime|string|truncate(19, true, "") }}
+    {{ model.datetime|string|truncate(16, true, "") }}
+{% endmacro %}
+
+{% macro render_content(model, column) %}
+    <strong>{{ model.content }}</strong>
 {% endmacro %}
 
 {% macro render_responses(model, column) %}
     {% for response in model.responses %}
-        <p>
-            {{ response.user.email }}<br>
-            <strong>{{ response.content }}</strong>
-        </p>
+        <div class="response">
+            {{ response.datetime|string|truncate(16, true, "") }}
+        <span class="pull-right label"><i class="icon-user icon-white"></i>
+            {% if response.user %}
+                {{ response.user.email }}
+            {% else %}
+                system
+            {% endif %}
+        </span><br>
+            <em>{{ response.content }}</em>
+        </div>
     {% endfor %}
-    <a class="btn" href="/admin/responseview/new/">new response</a>
+    <a class="btn btn-small btn-new-response pull-right" href="/admin/responseview/new/"><i class="icon-plus"></i> new response</a>
 {% endmacro %}

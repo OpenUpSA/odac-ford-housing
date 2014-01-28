@@ -34,3 +34,17 @@ body{
 .profile-pic{
     padding-top: 15px;
 }
+
+.response{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    margin-top: -1px;
+}
+
+.btn-new-response{
+    margin-top: 5px;
+}

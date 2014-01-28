@@ -29,6 +29,13 @@ class VumiMessage():
             "content": content,
             "session_event": session_event,
             }
+
+        rsp = Response()
+        rsp.query_id = self.query_id
+        rsp.content = content
+        db.session.add(rsp)
+        db.session.commit()
+
         if not app.debug:
             r = requests.put(message_url, auth=(account_key, access_token),
                          data=json.dumps(payload))
@@ -52,6 +59,7 @@ class VumiMessage():
         msg.datetime = self.datetime
         db.session.add(msg)
         db.session.commit()
+        self.query_id = msg.query_id
         return
 
     def __repr__(self):

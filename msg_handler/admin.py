@@ -124,6 +124,7 @@ class QueryView(MyModelView):
     )
     column_formatters = dict(
         datetime=macro('render_date'),
+        content=macro('render_content'),
         responses=macro('render_responses')
     )
     column_default_sort = ('from_addr', True)  # Descending order
