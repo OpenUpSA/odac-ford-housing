@@ -133,11 +133,6 @@ class QueryView(MyModelView):
     inline_models = [(Response, dict(form_label='Reply', ))]
 
 
-class ResponseView(MyModelView):
-
-    create_template = 'response_create_template.html'
-
-
 class UserView(MyModelView):
 
     can_create = False
@@ -156,5 +151,4 @@ admin = admin.Admin(app, 'Ford Housing', index_view=MyAdminIndexView(), base_tem
 
 # Add views
 admin.add_view(UserView(User, db.session))
-admin.add_view(ResponseView(Response, db.session))
 admin.add_view(QueryView(Query, db.session))

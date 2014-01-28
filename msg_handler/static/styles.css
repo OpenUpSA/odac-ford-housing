@@ -48,3 +48,9 @@ body{
 .btn-new-response{
     margin-top: 5px;
 }
+
+#response-form{
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}

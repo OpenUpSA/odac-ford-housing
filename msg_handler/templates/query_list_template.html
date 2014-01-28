@@ -22,5 +22,32 @@
             <em>{{ response.content }}</em>
         </div>
     {% endfor %}
-    <a class="btn btn-small btn-new-response pull-right" href="/admin/responseview/new/"><i class="icon-plus"></i> new response</a>
+    <a class="btn btn-small btn-new-response pull-right" href="#response-modal" data-toggle="modal">
+        <i class="icon-plus"></i> new response
+    </a>
 {% endmacro %}
+
+{% block body %}
+    {{ super() }}
+
+    <!-- Modal for sending responses -->
+    <div id="response-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="response-modal-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="response-modal-label">SMS response</h3>
+        </div>
+        <div class="modal-body">
+                <form id="response-form">
+                    <fieldset>
+                        <label class="pull-left">Message (max length 140 chars)</label>
+                        <textarea rows="5" class="input-xlarge" maxlength="140"></textarea>
+                        {#                    <span class="help-block">Example block-level help text here.</span>#}
+                    </fieldset>
+                </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button class="btn btn-primary">Send</button>
+        </div>
+    </div>
+{% endblock %}
