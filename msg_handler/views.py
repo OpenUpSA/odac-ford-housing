@@ -95,7 +95,9 @@ def serialize_options(sub_menu, selected_endpoint=None):
                 next = selected_endpoint + 2
             except IndexError:
                 selected_endpoint = 0
-        options_str += "\n" + str(next) + ": Next"
+        # don't add a 'next' link on the final screen
+        if not(len(items) == 1 or (selected_endpoint and selected_endpoint == len(items) - 1)):
+            options_str += "\n" + str(next) + ": Next"
         options_str += "\n" + item
     return options_str
 
