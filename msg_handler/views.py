@@ -5,6 +5,7 @@ import json
 import time
 from msg_handler import logger
 from msg_handler.vumi_go import VumiMessage
+from flask.ext.login import current_user, login_required
 
 
 # TODO: move these authentication variables out of the git repo
@@ -219,3 +220,23 @@ def event():
     tmp = request.get_json()
     logger.debug(json.dumps(tmp, indent=4))
     return make_response("OK")
+
+
+@login_required
+@app.route('/response/', methods=['POST',])
+def response():
+    """
+    Send SMS response to an SMS query.
+    """
+
+    logger.debug("RESPONSE endpoint called")
+
+    user = current_user
+    content = request.form['content']
+    query_id = request.form['query_id']
+
+    # send reply
+    msg = VumiMessage({'query_id': query_id})
+    msg.reply(content, ACCESS_TOKEN, ACCOUNT_KEY, session_event=None, user=user)
+
+    return redirect('/admin/queryview/', code=302)

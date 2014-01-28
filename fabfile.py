@@ -214,6 +214,20 @@ def deploy():
     with settings(warn_only=True):
         sudo('rm /var/www/odac-ford-housing/debug.log*')
 
+    # ensure user www-data has access to the application folder
+    sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
+    sudo('chmod -R 775 /var/www/odac-ford-housing')
+
+    # and finally reload the application
+    restart()
+    return
+
+
+def upload_db():
+    """
+    Overwrite the db on the server with a copy of the local db.
+    """
+
     # upload db
     put('instance/ford-housing.db', '/tmp/ford-housing.db')
     sudo('mv /tmp/ford-housing.db /var/www/odac-ford-housing/instance/ford-housing.db')
@@ -221,7 +235,13 @@ def deploy():
     # ensure user www-data has access to the application folder
     sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
     sudo('chmod -R 775 /var/www/odac-ford-housing')
+    return
 
-    # and finally reload the application
-    restart()
+
+def download_db():
+    """
+    Overwrite the local db with a copy from the server.
+    """
+
+    get('/var/www/odac-ford-housing/instance/ford-housing.db', 'instance/ford-housing.db')
     return

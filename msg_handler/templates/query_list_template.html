@@ -12,17 +12,19 @@
     {% for response in model.responses %}
         <div class="response">
             {{ response.datetime|string|truncate(16, true, "") }}
-        <span class="pull-right label"><i class="icon-user icon-white"></i>
             {% if response.user %}
+                <span class="pull-right label label-success"><i class="icon-user icon-white"></i>
                 {{ response.user.email }}
+                </span>
             {% else %}
-                system
+                <span class="pull-right label">
+                auto
+                </span>
             {% endif %}
-        </span><br>
-            <em>{{ response.content }}</em>
+            <br><em>{{ response.content }}</em>
         </div>
     {% endfor %}
-    <a class="btn btn-small btn-new-response pull-right" href="#response-modal" data-toggle="modal">
+    <a class="btn-new-response btn btn-small pull-right" href="#response-modal" data-toggle="modal" data-query-id="{{ model.query_id }}">
         <i class="icon-plus"></i> new response
     </a>
 {% endmacro %}
@@ -37,17 +39,31 @@
             <h3 id="response-modal-label">SMS response</h3>
         </div>
         <div class="modal-body">
-                <form id="response-form">
-                    <fieldset>
-                        <label class="pull-left">Message (max length 140 chars)</label>
-                        <textarea rows="5" class="input-xlarge" maxlength="140"></textarea>
-                        {#                    <span class="help-block">Example block-level help text here.</span>#}
-                    </fieldset>
-                </form>
+            <form id="response-form" action="/response/" method="post">
+                <fieldset>
+                    <label class="pull-left">Message (max length 140 chars)</label>
+                    <textarea name="content" rows="5" class="input-xlarge" maxlength="140"></textarea>
+                    <input id="query_id" name="query_id" type="hidden" value="0"/>
+
+                </fieldset>
+            </form>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button class="btn btn-primary">Send</button>
+            <button id="btn-send-response" class="btn btn-primary">Send</button>
         </div>
     </div>
+
+    <script type="application/javascript">
+        $(document).ready(function(){
+            $(".btn-new-response").on('click', function(event){
+                var query_id = event.currentTarget.attributes['data-query-id'].value
+                $("#query_id").val(query_id)
+            });
+
+            $("#btn-send-response").on('click', function(event){
+                $("#response-form").submit()
+            });
+        })
+    </script>
 {% endblock %}
