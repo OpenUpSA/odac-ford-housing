@@ -6,7 +6,7 @@ import time
 from msg_handler import db, logger
 from msg_handler.vumi_go import VumiMessage
 from flask.ext.login import current_user, login_required
-from models import Query
+from models import Query, Note
 
 # TODO: move these authentication variables out of the git repo
 
@@ -245,6 +245,31 @@ def response():
     qry = Query.query.get(query_id)
     qry.status = "in_progress"
     db.session.add(qry)
+    db.session.commit()
+
+    return redirect('/admin/queryview/', code=302)
+
+
+@login_required
+@app.route('/note/', methods=['POST',])
+def note():
+    """
+    Save a note related to a query.
+    """
+
+    logger.debug("NOTE endpoint called")
+
+    user = current_user
+    content = request.form['content']
+    query_id = request.form['query_id']
+
+    # save note
+    tmp = Note()
+    tmp.user = user
+    tmp.content = content
+    tmp.query_id = query_id
+
+    db.session.add(tmp)
     db.session.commit()
 
     return redirect('/admin/queryview/', code=302)

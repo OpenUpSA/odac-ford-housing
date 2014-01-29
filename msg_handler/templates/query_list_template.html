@@ -5,7 +5,7 @@
 {% endmacro %}
 
 {% macro render_content(model, column) %}
-    <strong>{{ model.content }}</strong>
+    <div class="rounded-box msg-content">{{ model.content }}</div>
 {% endmacro %}
 
 {% macro render_star(model, column) %}
@@ -48,10 +48,31 @@
     </div>
 {% endmacro %}
 
+{% macro render_notes(model, column) %}
+    {% for note in model.notes %}
+        <div class="invisible-box">
+            <small>{{ note.datetime|string|truncate(10, true, "") }}</small>
+            {% if note.user %}
+                <span class="pull-right label label-success"><i class="icon-user icon-white"></i>
+                {{ note.user.email }}
+                </span>
+            {% else %}
+                <span class="pull-right label">
+                auto
+                </span>
+            {% endif %}
+            <br>{{ note.content }}
+        </div>
+    {% endfor %}
+    <a class="btn-new-note btn btn-small pull-right" href="#note-modal" data-toggle="modal" data-query-id="{{ model.query_id }}">
+        <nobr><i class="icon-plus"></i> new note</nobr>
+    </a>
+{% endmacro %}
+
 {% macro render_responses(model, column) %}
     {% for response in model.responses %}
-        <div class="response">
-            {{ response.datetime|string|truncate(16, true, "") }}
+        <div class="rounded-box">
+            <small><nobr>{{ response.datetime|string|truncate(16, true, "") }}</nobr></small>
             {% if response.user %}
                 <span class="pull-right label label-success"><i class="icon-user icon-white"></i>
                 {{ response.user.email }}
@@ -61,11 +82,11 @@
                 auto
                 </span>
             {% endif %}
-            <br><em>{{ response.content }}</em>
+            <br><span class="msg-content">{{ response.content }}</span>
         </div>
     {% endfor %}
     <a class="btn-new-response btn btn-small pull-right" href="#response-modal" data-toggle="modal" data-query-id="{{ model.query_id }}">
-        <i class="icon-plus"></i> new response
+        <nobr><i class="icon-plus"></i> new response</nobr>
     </a>
 {% endmacro %}
 
@@ -162,6 +183,28 @@
 
     {{ actionlib.form(actions, url_for('.action_view')) }}
 
+    <!-- Modal for adding notes -->
+    <div id="note-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="response-modal-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="response-modal-label">Save a note</h3>
+        </div>
+        <div class="modal-body">
+            <form id="note-form" action="/note/" method="post">
+                <fieldset>
+                    <label class="pull-left">Note</label><br>
+                    <textarea name="content" rows="5" class="input-xlarge" maxlength="230"></textarea>
+                    <input id="new-note-query-id" name="query_id" type="hidden" value="0"/>
+
+                </fieldset>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="btn-send-note" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+
     <!-- Modal for sending responses -->
     <div id="response-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="response-modal-label" aria-hidden="true">
         <div class="modal-header">
@@ -171,9 +214,9 @@
         <div class="modal-body">
             <form id="response-form" action="/response/" method="post">
                 <fieldset>
-                    <label class="pull-left">Message (max length 140 chars)</label>
+                    <label class="pull-left">Message (max length 140 chars)</label><br>
                     <textarea name="content" rows="5" class="input-xlarge" maxlength="140"></textarea>
-                    <input id="query_id" name="query_id" type="hidden" value="0"/>
+                    <input id="new-response-query-id" name="query_id" type="hidden" value="0"/>
 
                 </fieldset>
             </form>
@@ -186,9 +229,18 @@
 
     <script type="application/javascript">
         $(document).ready(function(){
+            $(".btn-new-note").on('click', function(event){
+                var query_id = event.currentTarget.attributes['data-query-id'].value
+                $("#new-note-query-id").val(query_id)
+            });
+
+            $("#btn-send-note").on('click', function(event){
+                $("#note-form").submit()
+            });
+
             $(".btn-new-response").on('click', function(event){
                 var query_id = event.currentTarget.attributes['data-query-id'].value
-                $("#query_id").val(query_id)
+                $("#new-response-query-id").val(query_id)
             });
 
             $("#btn-send-response").on('click', function(event){

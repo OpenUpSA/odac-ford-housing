@@ -117,6 +117,7 @@ class QueryView(MyModelView):
         'from_addr',
         'status',
         'content',
+        'notes',
         'responses'
     )
     column_labels = dict(
@@ -129,6 +130,7 @@ class QueryView(MyModelView):
         datetime=macro('render_date'),
         status=macro('render_status'),
         content=macro('render_content'),
+        notes=macro('render_notes'),
         responses=macro('render_responses')
     )
     column_sortable_list = ('starred', 'datetime', 'from_addr', 'status')

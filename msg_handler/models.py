@@ -41,7 +41,6 @@ class Query(db.Model):
     datetime = db.Column(db.DateTime(), default=datetime.datetime.now)
     status = db.Column(db.String(20), default="pending")
     starred = db.Column(db.Boolean, default=False)
-    notes = db.Column(db.Text)
 
 
 class Response(db.Model):
@@ -52,6 +51,19 @@ class Response(db.Model):
 
     query_id = db.Column(db.Integer, db.ForeignKey('query.query_id'))
     query = db.relationship('Query', backref=backref("responses", order_by=datetime))
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User')
+
+
+class Note(db.Model):
+
+    note_id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(250), nullable=False)
+    datetime = db.Column(db.DateTime(), default=datetime.datetime.now)
+
+    query_id = db.Column(db.Integer, db.ForeignKey('query.query_id'))
+    query = db.relationship('Query', backref=backref("notes", order_by=datetime))
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
