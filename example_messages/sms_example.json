@@ -2,7 +2,7 @@
     "transport_name": "ambient_go_smpp_transport",
     "transport_metadata": {},
     "group": null,
-    "from_addr": "+27738257732",
+    "from_addr": "+27738257342",
     "timestamp": "2014-01-26 12:56:45.481038",
     "to_addr": "2783930028010243",
     "content": "Another test reply",

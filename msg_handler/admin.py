@@ -204,7 +204,7 @@ class UpdateView(MyModelView):
             with app.open_instance_resource('notification_list.json', mode='r') as f:
                 try:
                     notification_list = json.loads(f.read())
-                except ValueError, e:
+                except ValueError:
                     # start with clean list, if the file does not yet contain a list
                     notification_list = []
                     pass
@@ -213,10 +213,11 @@ class UpdateView(MyModelView):
                     msg.send(number)
                     count_tot += 1
             model.notes = "Update sent to " + str(count_tot) + " user(s)."
-        except Exception, e:
+        except Exception:
             tmp = "Error sending update broadcast via SMS."
             logger.exception(tmp)
             model.notes = tmp
+        return
 
 
 # Initialize flask-login

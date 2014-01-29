@@ -8,8 +8,6 @@ from msg_handler.vumi_go import VumiMessage
 from flask.ext.login import current_user, login_required
 from models import Query, Note
 
-# TODO: move these authentication variables out of the git repo
-
 
 def mark_online(user_id):
     now = int(time.time())
@@ -93,7 +91,7 @@ def serialize_options(sub_menu, selected_endpoint=None):
                 next = selected_endpoint + 2
             except IndexError:
                 selected_endpoint = 0
-            # don't add a 'next' link on the final screen
+                # don't add a 'next' link on the final screen
         if not(len(items) == 1 or (selected_endpoint and selected_endpoint == len(items) - 1)):
             options_str += "\n" + str(next) + ": Next"
         options_str += "\n" + item
@@ -172,7 +170,7 @@ def index():
     return redirect('admin/')
 
 
-@app.route('/message/', methods=['GET', 'POST'])
+@app.route('/message/', methods=['POST',])
 def message():
     """
     Handle incoming messages, passed as HTTP requests via the vumi HTTP API.
@@ -180,35 +178,37 @@ def message():
 
     logger.debug("MESSAGE endpoint called")
 
-    if request.method == 'POST':
-
+    try:
         tmp = request.get_json()
         msg = VumiMessage(tmp)
-        if msg.content == "state: wait_ussrc":
+        if hasattr(msg, 'content') and msg.content == "state: wait_ussrc":
             logger.debug("End of session message received.")
         else:
-            logger.debug(msg)
-            try:
-                if msg.msg_type == "ussd":
-                    user_id = msg.from_addr  # user's cellphone number
-                    content = msg.content  # selected menu item, if any
-                    mark_online(user_id)
-                    selected_item = None
-                    try:
-                        selected_item = int(content)
-                    except (ValueError, TypeError):
-                        pass
-                    reply_content = generate_output(user_id, selected_item)
-                    if "Your number has been added to the list." in reply_content:
-                        update_notification_list(msg.from_addr, "add")
-                    msg.send_reply(reply_content)
-                elif msg.msg_type == "sms":
-                    msg.save_query()
-                    tmp = "Thank you for submitting your query. It will be attended to as soon as possible."
-                    msg.send_reply(tmp)
-            except Exception as e:
-                logger.exception(e)
-                pass
+            logger.debug(msg.msg_type + " message received.")
+            if msg.msg_type == "ussd":
+                user_id = msg.from_addr  # user's cellphone number
+                content = msg.content  # selected menu item, if any
+                mark_online(user_id)
+                selected_item = None
+                try:
+                    selected_item = int(content)
+                except (ValueError, TypeError):
+                    pass
+                logger.debug(selected_item)
+                reply_content = generate_output(user_id, selected_item)
+                if "Your number has been added to the list." in reply_content:
+                    update_notification_list(msg.from_addr, "add")
+                msg.send_reply(reply_content)
+            elif msg.msg_type == "sms":
+                msg.save_query()
+                tmp = "Thank you for submitting your query. It will be attended to as soon as possible."
+                msg.send_reply(tmp)
+            else:
+                logger.error("Incorrect message type encountered.")
+
+    except Exception as e:
+        logger.exception(e)
+        raise
     return make_response("OK")
 
 
@@ -326,11 +326,11 @@ def update_notification_list(number, add_or_remove="add"):
         with app.open_instance_resource('notification_list.json', mode='r') as f:
             try:
                 notification_list = json.loads(f.read())
-            except ValueError, e:
+            except ValueError as e:
                 # start with clean list, if the file does not yet contain a list
                 notification_list = []
                 pass
-            # add / remove item
+                # add / remove item
         if add_or_remove == "add":
             if not number in notification_list:
                 notification_list.append(number)
@@ -338,10 +338,10 @@ def update_notification_list(number, add_or_remove="add"):
             if number in notification_list:
                 i = notification_list.index(number)
                 notification_list = notification_list[0:i] + notification_list[i+1::]
-            # write updated list to file
+                # write updated list to file
         with app.open_instance_resource('notification_list.json', mode='w') as f:
             f.write(json.dumps(notification_list, indent=4))
-    except Exception, e:
+    except Exception as e:
         if add_or_remove == "add":
             logger.exception("Error saving number to the notification list.")
         else:
