@@ -22,7 +22,7 @@
     padding-right: 10px;
     padding-left: 10px;
     border: 1px solid #cccccc;
-    background-color: #eeeeee;
+    background-color: rgba(245, 245, 245, 0.5);
     border-radius: 5px;
     margin-top: -1px;
 }
@@ -39,4 +39,16 @@
 
 .star-container{
     text-align: center;
+}
+
+tr[data-starred="True"]{
+    font-weight: bold;
+}
+
+tr[data-status="pending"]{
+    background-color: #FFFF99;
+}
+
+tr[data-status="in_progress"]{
+    background-color: #C8F6C8;
 }
