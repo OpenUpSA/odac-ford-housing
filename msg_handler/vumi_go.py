@@ -6,6 +6,9 @@ from msg_handler.models import Query, Response
 from msg_handler import db
 from msg_handler import app
 
+ACCESS_TOKEN = app.config['ACCESS_TOKEN']
+ACCOUNT_KEY = app.config['ACCOUNT_KEY']
+
 class VumiMessage():
 
     def __init__(self, msg_dict):
@@ -21,21 +24,48 @@ class VumiMessage():
                 self.timestamp = datetime.strftime(self.datetime, '%Y-%m-%d %H:%M:%S.%f')
                 self.datetime = qry.datetime
             except Exception, e:
-                logger.exception("Could not load specified query int VumiMessage instance.")
+                logger.exception("Could not load specified Query record.")
         else:
             try:
-                self.message_id = msg_dict['message_id']
-                self.msg_type = msg_dict['transport_type']  # either 'ussd' or 'sms'
-                self.content = msg_dict['content']
-                self.conversation_key = msg_dict['helper_metadata']['go']['conversation_key']
-                self.from_addr = msg_dict['from_addr']
-                self.timestamp = msg_dict['timestamp']  # e.g. "2013-12-02 06:28:07.430549"
-                self.datetime = datetime.strptime(self.timestamp, '%Y-%m-%d %H:%M:%S.%f')
-            except ValueError, e:
+                if msg_dict.get('message_id'):
+                    self.message_id = msg_dict['message_id']
+                if msg_dict.get('transport_type'):
+                    self.msg_type = msg_dict['transport_type']  # either 'ussd' or 'sms'
+                if msg_dict.get('content'):
+                    self.content = msg_dict['content']
+                if msg_dict.get('helper_metadata'):
+                    self.conversation_key = msg_dict['helper_metadata']['go']['conversation_key']
+                else:
+                    self.conversation_key = app.config['CONVERSATION_KEY']
+                if msg_dict.get('from_addr'):
+                    self.from_addr = msg_dict['from_addr']
+                if msg_dict.get('timestamp'):
+                    self.timestamp = msg_dict['timestamp']  # e.g. "2013-12-02 06:28:07.430549"
+                    self.datetime = datetime.strptime(self.timestamp, '%Y-%m-%d %H:%M:%S.%f')
+            except Exception, e:
                 logger.exception("Could not create VumiMessage instance.")
         return
 
-    def reply(self, content, access_token, account_key, session_event="resume", user=None):
+    def send(self, to_addr):
+
+        conversation_key = self.conversation_key
+        message_url = 'http://go.vumi.org/api/v1/go/http_api/' + conversation_key + '/messages.json'
+        payload = {
+            "to_addr": to_addr,
+            "content": self.content,
+            }
+        if not app.debug:
+            r = requests.put(message_url, auth=(ACCOUNT_KEY, ACCESS_TOKEN),
+                         data=json.dumps(payload))
+            logger.debug(r.text)
+            if not r.status_code == 200:
+                logger.error("HTTP error encountered while trying to send message through VumiGo API.")
+            return r.text
+        else:
+            logger.debug("MESSAGE SENT \n" + json.dumps(payload, indent=4))
+            return
+
+    def send_reply(self, content, session_event="resume", user=None):
         conversation_key = self.conversation_key
         message_url = 'http://go.vumi.org/api/v1/go/http_api/' + conversation_key + '/messages.json'
         payload = {
@@ -55,10 +85,10 @@ class VumiMessage():
             db.session.commit()
 
         if not app.debug:
-            r = requests.put(message_url, auth=(account_key, access_token),
+            r = requests.put(message_url, auth=(ACCOUNT_KEY, ACCESS_TOKEN),
                          data=json.dumps(payload))
             if not r.status_code == 200:
-                logger.error("HTTP error encountered while trying to send message though VumiGo API.")
+                logger.error("HTTP error encountered while trying to send message through VumiGo API.")
             return r.text
         else:
             logger.debug("REPLY \n" + json.dumps(payload, indent=4))

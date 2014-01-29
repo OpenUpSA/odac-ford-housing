@@ -9,8 +9,6 @@ from flask.ext.login import current_user, login_required
 
 
 # TODO: move these authentication variables out of the git repo
-ACCESS_TOKEN = app.config['ACCESS_TOKEN']
-ACCOUNT_KEY = app.config['ACCOUNT_KEY']
 
 
 def mark_online(user_id):
@@ -95,7 +93,7 @@ def serialize_options(sub_menu, selected_endpoint=None):
                 next = selected_endpoint + 2
             except IndexError:
                 selected_endpoint = 0
-        # don't add a 'next' link on the final screen
+            # don't add a 'next' link on the final screen
         if not(len(items) == 1 or (selected_endpoint and selected_endpoint == len(items) - 1)):
             options_str += "\n" + str(next) + ": Next"
         options_str += "\n" + item
@@ -203,11 +201,11 @@ def message():
                     reply_content = generate_output(user_id, selected_item)
                     if "Your number has been added to the list." in reply_content:
                         update_notification_list(msg.from_addr, "add")
-                    msg.reply(reply_content, ACCESS_TOKEN, ACCOUNT_KEY)
+                    msg.send_reply(reply_content)
                 elif msg.msg_type == "sms":
                     msg.save_query()
                     tmp = "Thank you for submitting your query. It will be attended to as soon as possible."
-                    msg.reply(tmp, ACCESS_TOKEN, ACCOUNT_KEY)
+                    msg.send_reply(tmp)
             except Exception as e:
                 logger.exception(e)
                 pass
@@ -241,7 +239,7 @@ def response():
 
     # send reply
     msg = VumiMessage({'query_id': query_id})
-    msg.reply(content, ACCESS_TOKEN, ACCOUNT_KEY, session_event=None, user=user)
+    msg.send_reply(content, session_event=None, user=user)
 
     return redirect('/admin/queryview/', code=302)
 
@@ -260,7 +258,7 @@ def update_notification_list(number, add_or_remove="add"):
                 # start with clean list, if the file does not yet contain a list
                 notification_list = []
                 pass
-        # add / remove item
+            # add / remove item
         if add_or_remove == "add":
             if not number in notification_list:
                 notification_list.append(number)
@@ -268,7 +266,7 @@ def update_notification_list(number, add_or_remove="add"):
             if number in notification_list:
                 i = notification_list.index(number)
                 notification_list = notification_list[0:i] + notification_list[i+1::]
-        # write updated list to file
+            # write updated list to file
         with app.open_instance_resource('notification_list.json', mode='w') as f:
             f.write(json.dumps(notification_list, indent=4))
     except Exception, e:
