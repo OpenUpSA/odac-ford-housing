@@ -30,7 +30,7 @@ class MsgHandlerTestCase(unittest.TestCase):
         Check the contents of the response, after hitting the server with a message.
         """
         assert 'OK' in self.send_msg("USSD", "1")
-        assert 'OK' in self.send_msg("SMS", "test")
+        assert 'OK' in self.send_msg("SMS", "atest")
 
 
 if __name__ == '__main__':

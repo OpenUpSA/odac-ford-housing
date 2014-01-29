@@ -127,10 +127,11 @@ class QueryView(MyModelView):
     column_formatters = dict(
         starred=macro('render_star'),
         datetime=macro('render_date'),
+        status=macro('render_status'),
         content=macro('render_content'),
         responses=macro('render_responses')
     )
-    column_default_sort = ('datetime', True)  # Descending order
+    column_default_sort = ('datetime', True)
     list_template = 'query_list_template.html'
     form_overrides = dict(
         content=TextAreaField,

@@ -253,12 +253,32 @@ def toggle_star():
 
     logger.debug("TOGGLE STAR endpoint called")
 
-    user = current_user
     query_id = request.form['query_id']
 
     # toggle starred value
     qry = Query.query.get(query_id)
     qry.starred = not qry.starred
+    db.session.add(qry)
+    db.session.commit()
+
+    return redirect('/admin/queryview/', code=302)
+
+
+@login_required
+@app.route('/update_status/', methods=['POST',])
+def update_status():
+    """
+    Update a query status.
+    """
+
+    logger.debug("UPDATE STATUS endpoint called")
+
+    query_id = request.form['query_id']
+    status = request.form['status']
+
+    # toggle starred value
+    qry = Query.query.get(query_id)
+    qry.status = status
     db.session.add(qry)
     db.session.commit()
 

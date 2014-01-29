@@ -3,14 +3,14 @@
     "transport_metadata": {},
     "group": null,
     "from_addr": "+27738257732",
-    "timestamp": "2014-01-24 12:56:45.481038",
+    "timestamp": "2014-01-26 12:56:45.481038",
     "to_addr": "2783930028010243",
     "content": "Another test reply",
     "routing_metadata": {
         "go_hops": [
             [
                 [
-                    "TRANSPORT_TAG:longcode:default10243",
+                    "TRANSPORT_TAG:longcode:default10244",
                     "default"
                 ],
                 [
@@ -41,6 +41,6 @@
     },
     "in_reply_to": null,
     "session_event": null,
-    "message_id": "67f12baf5ff5426e80d7c15403227241",
+    "message_id": "67f12baf5ff5426e80d7c154032272414",
     "message_type": "user_message"
 }

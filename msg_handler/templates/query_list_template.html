@@ -26,6 +26,28 @@
     </div>
 {% endmacro %}
 
+{% macro render_status(model, column) %}
+    <div class="status-container">
+        <form class="icon" method="POST" action="/update_status/">
+            {% if csrf_token %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {% endif %}
+            <input type="hidden" name="query_id" value="{{ model.query_id }}"/>
+            <select class="status-select input-medium" name="status">
+                <option value="pending" {% if model.status == "pending" %}selected="true"{% endif %}>
+                    pending
+                </option>
+                <option value="in_progress" {% if model.status == "in_progress" %}selected="true"{% endif %}>
+                    in progress
+                </option>
+                <option value="finished" {% if model.status == "finished" %}selected="true"{% endif %}>
+                    finished
+                </option>
+            </select>
+        </form>
+    </div>
+{% endmacro %}
+
 {% macro render_responses(model, column) %}
     {% for response in model.responses %}
         <div class="response">
@@ -167,6 +189,10 @@
 
             $("#btn-send-response").on('click', function(event){
                 $("#response-form").submit()
+            });
+
+            $(".status-select").on('change', function(event){
+                $(this).parent('form').submit()
             });
         })
     </script>
