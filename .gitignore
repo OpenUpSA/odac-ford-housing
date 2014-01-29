@@ -36,5 +36,6 @@ nosetests.xml
 .pydevproject
 
 instance/ford-housing.db
+instance/notification_list.json
 debug.log
 .idea/*

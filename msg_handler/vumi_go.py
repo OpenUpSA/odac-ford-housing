@@ -53,11 +53,13 @@ class VumiMessage():
         payload = {
             "to_addr": to_addr,
             "content": self.content,
+            # "transport_type": "sms",
             }
         if not app.debug:
             r = requests.put(message_url, auth=(ACCOUNT_KEY, ACCESS_TOKEN),
                          data=json.dumps(payload))
-            logger.debug(r.text)
+            logger.debug(message_url)
+            logger.debug(str(r.status_code) + " " + r.text)
             if not r.status_code == 200:
                 logger.error("HTTP error encountered while trying to send message through VumiGo API.")
             return r.text

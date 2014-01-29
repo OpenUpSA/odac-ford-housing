@@ -1,0 +1,17 @@
+{% extends 'admin/model/list.html' %}
+
+{% macro render_date(model, column) %}
+    {{ model.datetime|string|truncate(16, true, "") }}
+{% endmacro %}
+
+{% macro render_user(model, column) %}
+    {% if model.user %}
+        <nobr><span class="label label-success"><i class="icon-user icon-white"></i>
+                {{ model.user.email }}
+                </span></nobr>
+    {% else %}
+        <span class="pull-right label">
+                auto
+                </span>
+    {% endif %}
+{% endmacro %}

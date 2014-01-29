@@ -6,9 +6,11 @@ from flask.ext.admin.contrib import sqla
 from flask.ext.admin import helpers, expose
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.form import rules
+from flask.ext.login import current_user
 from msg_handler import app, db, logger
 from msg_handler.models import *
-
+from vumi_go import VumiMessage
+import json
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -162,6 +164,61 @@ class UserView(MyModelView):
     )
 
 
+class UpdateView(MyModelView):
+
+    can_delete = False
+    can_edit = False
+    list_template = 'update_list_template.html'
+    column_list = (
+        'datetime',
+        'user',
+        'content',
+        'notes'
+    )
+    column_labels = dict(
+        datetime='Date',
+        user='User',
+        content='Message',
+        notes='Notes'
+    )
+    column_default_sort = ('datetime', True)
+    column_formatters = dict(
+        datetime=macro('render_date'),
+        user=macro('render_user'),
+    )
+    form_overrides = dict(
+        content=TextAreaField,
+    )
+    form_create_rules = [
+        rules.Field('content'),
+    ]
+
+    def on_model_change(self, form, model, is_created):
+
+        # send SMS notifications before saving message to database
+        msg = VumiMessage({"content": model.content})
+        count_tot = 0
+        model.user = current_user
+
+        try:
+            with app.open_instance_resource('notification_list.json', mode='r') as f:
+                try:
+                    notification_list = json.loads(f.read())
+                except ValueError, e:
+                    # start with clean list, if the file does not yet contain a list
+                    notification_list = []
+                    pass
+                for number in notification_list:
+                    logger.debug("sending update to: " + number)
+                    msg.send(number)
+                    count_tot += 1
+            model.notes = "Update sent to " + str(count_tot) + " user(s)."
+        except Exception, e:
+            tmp = "Error sending update broadcast via SMS."
+            logger.exception(tmp)
+            model.notes = tmp
+
+
 # Initialize flask-login
 init_login()
 
@@ -171,3 +228,4 @@ admin = admin.Admin(app, 'Ford Housing', index_view=MyAdminIndexView(), base_tem
 # Add views
 admin.add_view(UserView(User, db.session))
 admin.add_view(QueryView(Query, db.session))
+admin.add_view(UpdateView(Update, db.session))

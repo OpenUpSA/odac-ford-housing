@@ -67,3 +67,14 @@ class Note(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
+
+
+class Update(db.Model):
+
+    update_id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(180))
+    datetime = db.Column(db.DateTime(), default=datetime.datetime.now)
+    notes = db.Column(db.Text(250))
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User')
