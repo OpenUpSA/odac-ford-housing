@@ -112,8 +112,10 @@ class QueryView(MyModelView):
     can_edit = False
     can_delete = False
     column_list = (
+        'starred',
         'datetime',
         'from_addr',
+        'status',
         'content',
         'responses'
     )
@@ -123,13 +125,25 @@ class QueryView(MyModelView):
         content='Message'
     )
     column_formatters = dict(
+        starred=macro('render_star'),
         datetime=macro('render_date'),
         content=macro('render_content'),
         responses=macro('render_responses')
     )
-    column_default_sort = ('from_addr', True)  # Descending order
+    column_default_sort = ('datetime', True)  # Descending order
     list_template = 'query_list_template.html'
-    form_overrides = dict(content=TextAreaField, )
+    form_overrides = dict(
+        content=TextAreaField,
+        )
+    form_args = dict(
+        status=dict(
+            choices=[
+                ('pending', 'pending'),
+                ('in_progress', 'in progress'),
+                ('finished', 'finished')
+            ]
+        )
+    )
     inline_models = [(Response, dict(form_label='Reply', ))]
 
 

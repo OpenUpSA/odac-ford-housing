@@ -39,6 +39,9 @@ class Query(db.Model):
     conversation_key = db.Column(db.String(100))
     from_addr = db.Column(db.String(100))
     datetime = db.Column(db.DateTime(), default=datetime.datetime.now)
+    status = db.Column(db.String(20), default="pending")
+    starred = db.Column(db.Boolean, default=False)
+    notes = db.Column(db.Text)
 
 
 class Response(db.Model):

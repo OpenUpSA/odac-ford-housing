@@ -3,10 +3,10 @@ from msg_handler import app, redis
 from msg_handler.menu import menu
 import json
 import time
-from msg_handler import logger
+from msg_handler import db, logger
 from msg_handler.vumi_go import VumiMessage
 from flask.ext.login import current_user, login_required
-
+from models import Query
 
 # TODO: move these authentication variables out of the git repo
 
@@ -240,6 +240,27 @@ def response():
     # send reply
     msg = VumiMessage({'query_id': query_id})
     msg.send_reply(content, session_event=None, user=user)
+
+    return redirect('/admin/queryview/', code=302)
+
+
+@login_required
+@app.route('/toggle_star/', methods=['POST',])
+def toggle_star():
+    """
+    Star / unstar a query.
+    """
+
+    logger.debug("TOGGLE STAR endpoint called")
+
+    user = current_user
+    query_id = request.form['query_id']
+
+    # toggle starred value
+    qry = Query.query.get(query_id)
+    qry.starred = not qry.starred
+    db.session.add(qry)
+    db.session.commit()
 
     return redirect('/admin/queryview/', code=302)
 
