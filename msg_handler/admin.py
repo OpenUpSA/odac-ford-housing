@@ -131,6 +131,8 @@ class QueryView(MyModelView):
         content=macro('render_content'),
         responses=macro('render_responses')
     )
+    column_sortable_list = ('starred', 'datetime', 'from_addr', 'status')
+    column_searchable_list = ('content', Response.content)
     column_default_sort = ('datetime', True)
     list_template = 'query_list_template.html'
     form_overrides = dict(

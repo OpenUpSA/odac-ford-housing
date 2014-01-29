@@ -241,6 +241,12 @@ def response():
     msg = VumiMessage({'query_id': query_id})
     msg.send_reply(content, session_event=None, user=user)
 
+    # update query status
+    qry = Query.query.get(query_id)
+    qry.status = "in_progress"
+    db.session.add(qry)
+    db.session.commit()
+
     return redirect('/admin/queryview/', code=302)
 
 

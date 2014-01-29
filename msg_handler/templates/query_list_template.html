@@ -93,6 +93,10 @@
                     {% block list_row_actions_header %}
                     {% endblock %}
                     {% set column = 0 %}
+                    {% if not sort_column %}
+                        {% set sort_column = 1 %}
+                        {% set sort_desc = True %}
+                    {% endif %}
                     {% for c, name in list_columns %}
                         <th class="column-header">
                             {% if admin_view.is_sortable(c) %}
