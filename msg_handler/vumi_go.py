@@ -9,6 +9,7 @@ from msg_handler import app
 ACCESS_TOKEN = app.config['ACCESS_TOKEN']
 ACCOUNT_KEY = app.config['ACCOUNT_KEY']
 
+
 class VumiMessage():
     # TODO: Use separate classes for USSD & SMS, and have them inherit from this class
 
@@ -110,7 +111,7 @@ class VumiMessage():
                 logger.error("HTTP error encountered while trying to send message through VumiGo API.")
             return r.text
         else:
-            logger.debug("REPLY \n" + json.dumps(payload, indent=4))
+            logger.debug("REPLY NOT SENT (we're in DEBUG mode):\n" + json.dumps(payload, indent=4))
             return
 
     def save_query(self):
