@@ -1,6 +1,7 @@
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.console import confirm
+from contextlib import contextmanager
 
 
 def staging():
@@ -13,9 +14,17 @@ def staging():
     env.user = 'ubuntu'
     env.group = 'ubuntu'
     env.key_filename = '~/.ssh/aws_code4sa.pem'
-    env['code_dir'] = '/var/www/odac-ford-housing'
-    env['config_dir'] = 'config_staging'
+    env.code_dir = '/var/www/odac-ford-housing'
+    env.config_dir = 'config_staging'
+    env.activate = 'source /var/www/odac-ford-housing/env/bin/activate'
     print("STAGING ENVIRONMENT\n")
+
+
+@contextmanager
+def virtualenv():
+    with cd(env.code_dir):
+        with prefix(env.activate):
+            yield
 
 
 def configure_redis():
@@ -101,8 +110,7 @@ def setup():
     # install packages
     sudo('apt-get install build-essential python python-dev')
     sudo('apt-get install python-pip')
-
-    # TODO: setup virtualenv
+    sudo('pip install virtualenv')
 
     # create application directory if it doesn't exist yet
     with settings(warn_only=True):
@@ -111,26 +119,29 @@ def setup():
             sudo('mkdir -p /var/www/odac-ford-housing')
             sudo('mkdir -p /var/www/odac-ford-housing/msg_handler')
             sudo('mkdir /var/www/odac-ford-housing/instance')
+        if run("test -d %s/env" % env['code_dir']).failed:
+            # create virtualenv
+            sudo('virtualenv --no-site-packages %s/env' % env['code_dir'])
 
     # clear pip's cache
     with settings(warn_only=True):
         sudo('rm -r /tmp/pip-build-root')
 
     # install the necessary Python packages
-    put('requirements/base.txt', '/tmp/base.txt')
-    put('requirements/production.txt', '/tmp/production.txt')
-    sudo('pip install -r /tmp/production.txt')
+    with virtualenv():
+        put('requirements/base.txt', '/tmp/base.txt')
+        put('requirements/production.txt', '/tmp/production.txt')
+        sudo('pip install -r /tmp/production.txt')
 
     # install nginx
     sudo('apt-get install nginx')
     # restart nginx after reboot
     sudo('update-rc.d nginx defaults')
     sudo('service nginx start')
-    
+
     # ensure that www-data has access to the application folder
     sudo('chmod -R 770 /var/www/odac-ford-housing')
     sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
-    
     return
 
 

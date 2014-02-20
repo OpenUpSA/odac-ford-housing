@@ -5,12 +5,34 @@ USSD, SMS &amp; Web application for disseminating information relating to the pr
 
 http://ford-housing.demo4sa.org/
 
+Local setup:
+------------
+Install Redis
+
+Run Redis:
+
+    redis-server
+
+In an new terminal window, create a virtual environment:
+
+    virtualenv --no-site-packages env
+    source env/bin/activate
+
+Install python libraries:
+
+    pip install -r requirements/local.txt
+
+Run Flask dev server:
+
+    python runserver.py
+
 
 NOTES:
 ------
 To access this server via SSH:
 
     ssh -v -i ~/.ssh/aws_code4sa.pem ubuntu@54.194.210.25
+
 
 Logs can be found at:
 
