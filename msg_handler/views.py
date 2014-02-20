@@ -158,6 +158,10 @@ def generate_output(user_id, selected_item=None):
 
     # return the menu's string representation
     str_out = serialize_options(sub_menu, selected_endpoint)
+    logger.debug("USSD message content \n" + str_out)
+    if len(str_out) > 140:
+        logger.error("USSD character limit exceeded.")
+    logger.debug("content length = " + str(len(str_out)))
     return str_out
 
 
