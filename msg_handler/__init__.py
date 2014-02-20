@@ -2,6 +2,7 @@ import logging
 from flask import Flask
 from redis import Redis
 from flask.ext.sqlalchemy import SQLAlchemy
+import sys
 
 redis = Redis()
 
@@ -30,6 +31,12 @@ file_handler = RotatingFileHandler(log_path + 'debug.log')
 file_handler.setLevel(LOG_LEVEL)
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
+
+# also log to stdout
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_handler.setLevel(LOG_LEVEL)
+stream_handler.setFormatter(file_formatter)
+logger.addHandler(stream_handler)
 
 import msg_handler.admin
 import msg_handler.views
