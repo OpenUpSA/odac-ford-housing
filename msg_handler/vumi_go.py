@@ -6,9 +6,9 @@ from msg_handler.models import Query, Response
 from msg_handler import db
 from msg_handler import app
 
-ACCESS_TOKEN = app.config['ACCESS_TOKEN']
-ACCOUNT_KEY = app.config['ACCOUNT_KEY']
-
+VUMI_ACCESS_TOKEN = app.config['VUMI_ACCESS_TOKEN']
+VUMI_ACCOUNT_KEY = app.config['VUMI_ACCOUNT_KEY']
+VUMI_CONVERSATION_KEY = app.config['VUMI_CONVERSATION_KEY']
 
 class VumiMessage():
     # TODO: Use separate classes for USSD & SMS, and have them inherit from this class
@@ -41,7 +41,7 @@ class VumiMessage():
                 if msg_dict.get('helper_metadata'):
                     self.conversation_key = msg_dict['helper_metadata']['go']['conversation_key']
                 else:
-                    self.conversation_key = app.config['CONVERSATION_KEY']
+                    self.conversation_key = VUMI_CONVERSATION_KEY
                 if msg_dict.get('from_addr'):
                     self.from_addr = msg_dict['from_addr']
                 if msg_dict.get('timestamp'):
@@ -61,7 +61,7 @@ class VumiMessage():
             "content": self.content,
             }
         if not app.debug:
-            r = requests.put(message_url, auth=(ACCOUNT_KEY, ACCESS_TOKEN),
+            r = requests.put(message_url, auth=(VUMI_ACCOUNT_KEY, VUMI_ACCESS_TOKEN),
                          data=json.dumps(payload))
             logger.debug(message_url)
             logger.debug("Status Code: " + str(r.status_code))
@@ -98,7 +98,7 @@ class VumiMessage():
             db.session.commit()
 
         if not app.debug:
-            r = requests.put(message_url, auth=(ACCOUNT_KEY, ACCESS_TOKEN),
+            r = requests.put(message_url, auth=(VUMI_ACCOUNT_KEY, VUMI_ACCESS_TOKEN),
                          data=json.dumps(payload))
             logger.debug("Response Status Code: " + str(r.status_code))
             try:

@@ -183,14 +183,16 @@ def configure():
         # create symlinks for emperor to find config file
         sudo('ln -s /var/www/odac-ford-housing/uwsgi.ini /etc/uwsgi/vassals')
 
-    sudo('chown -R www-data:www-data /var/log/uwsgi')
-    sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
-
     # upload flask config
     with settings(warn_only=True):
         sudo('mkdir /var/www/odac-ford-housing/instance')
     put(env['config_dir'] + '/config.py', '/tmp/config.py')
     sudo('mv /tmp/config.py /var/www/odac-ford-housing/instance/config.py')
+    put(env['config_dir'] + '/config_private.py', '/tmp/config_private.py')
+    sudo('mv /tmp/config_private.py /var/www/odac-ford-housing/instance/config_private.py')
+
+    sudo('chown -R www-data:www-data /var/log/uwsgi')
+    sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
 
     restart()
     return

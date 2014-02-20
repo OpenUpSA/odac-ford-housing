@@ -39,3 +39,5 @@ instance/ford-housing.db
 instance/notification_list.json
 debug.log
 .idea/*
+
+*/config_private.py
