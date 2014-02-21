@@ -91,7 +91,7 @@ def install_redis():
             sudo('update-rc.d redis_6379 defaults')
 
     configure_redis()
-    # reboot once, to let redis start up automatically
+    # a reboot is required for redis to start up nicely
     sudo('reboot')
     return
 
@@ -201,6 +201,10 @@ def configure():
     put(env.config_dir + '/config_private.py', '/tmp/config_private.py')
     sudo('mv /tmp/config_private.py %s/instance/config_private.py' % env.code_dir)
 
+    # upload rebuild_db script
+    put('rebuild_db.py', '/tmp/rebuild_db.py')
+    sudo('mv /tmp/rebuild_db.py %s/rebuild_db.py' % env.code_dir)
+
     set_permissions()
     restart()
     return
@@ -240,6 +244,14 @@ def deploy():
 
     set_permissions()
     restart()
+    return
+
+
+def rebuild_db():
+
+    with cd(env.code_dir):
+        with virtualenv():
+            sudo('python rebuild_db.py')
     return
 
 
