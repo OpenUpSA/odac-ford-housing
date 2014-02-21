@@ -10,14 +10,27 @@ def staging():
     """
 
     env.hosts = ['54.194.210.25']
-    env.envname = 'staging'
     env.user = 'ubuntu'
-    env.group = 'ubuntu'
+    env.envname = 'staging'
     env.key_filename = '~/.ssh/aws_code4sa.pem'
     env.code_dir = '/var/www/odac-ford-housing'
     env.config_dir = 'config_staging'
-    env.activate = 'source %s/env/bin/activate' % env.code_dir
     print("STAGING ENVIRONMENT\n")
+
+
+def production():
+    """
+    Env parameters for the staging environment.
+    """
+
+    env.host_string = 'adi@197.221.34.5:2222'
+    env.envname = 'production'
+    env.code_dir = '/var/www/ford-housing.code4sa.org'
+    env.config_dir = 'config_production'
+    print("PRODUCTION ENVIRONMENT\n")
+
+# Common environment parameters
+env.activate = 'source %s/env/bin/activate' % env.code_dir
 
 
 @contextmanager
