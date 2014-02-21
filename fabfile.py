@@ -114,6 +114,7 @@ def restart():
 
     with settings(warn_only=True):
         sudo('service nginx restart')
+        sudo('supervisorctl restart odac-ford-housing')
     return
 
 
@@ -140,7 +141,7 @@ def setup():
 
     # install packages
     sudo('apt-get install build-essential python python-dev')
-    sudo('apt-get install python-pip')
+    sudo('apt-get install python-pip supervisor')
     sudo('pip install virtualenv')
 
     # create application directory if it doesn't exist yet
@@ -172,7 +173,7 @@ def setup():
 
 def configure():
     """
-    Configure Nginx & Flask. Then restart.
+    Configure Nginx, supervisor & Flask. Then restart.
     """
 
     with settings(warn_only=True):
@@ -181,10 +182,16 @@ def configure():
 
     # upload nginx server blocks (virtualhost)
     put(env.config_dir + '/nginx.conf', '/tmp/nginx.conf')
-    sudo('mv /tmp/nginx.conf %s/nginx.conf' % env.code_dir)
+    sudo('mv /tmp/nginx.conf %s/nginx_odac-ford-housing.conf' % env.code_dir)
 
     with settings(warn_only=True):
-        sudo('ln -s %s/nginx.conf /etc/nginx/conf.d/' % env.code_dir)
+        sudo('ln -s %s/nginx_odac-ford-housing.conf /etc/nginx/conf.d/' % env.code_dir)
+
+    # upload supervisor config
+    put(env.config_dir + '/supervisor.conf', '/tmp/supervisor.conf')
+    sudo('mv /tmp/supervisor.conf /etc/supervisor/conf.d/supervisor_odac-ford-housing.conf')
+    sudo('supervisorctl reread')
+    sudo('supervisorctl update')
 
     # upload flask config
     with settings(warn_only=True):
