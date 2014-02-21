@@ -16,7 +16,7 @@ def staging():
     env.key_filename = '~/.ssh/aws_code4sa.pem'
     env.code_dir = '/var/www/odac-ford-housing'
     env.config_dir = 'config_staging'
-    env.activate = 'source /var/www/odac-ford-housing/env/bin/activate'
+    env.activate = 'source %s/env/bin/activate' % env.code_dir
     print("STAGING ENVIRONMENT\n")
 
 
@@ -116,9 +116,9 @@ def setup():
     with settings(warn_only=True):
         if run("test -d %s" % env['code_dir']).failed:
             # create project folder
-            sudo('mkdir -p /var/www/odac-ford-housing')
-            sudo('mkdir -p /var/www/odac-ford-housing/msg_handler')
-            sudo('mkdir /var/www/odac-ford-housing/instance')
+            sudo('mkdir -p ' + env.code_dir)
+            sudo('mkdir -p %s/msg_handler' % env.code_dir)
+            sudo('mkdir %s/instance' % env.code_dir)
         if run("test -d %s/env" % env['code_dir']).failed:
             # create virtualenv
             sudo('virtualenv --no-site-packages %s/env' % env['code_dir'])
@@ -140,8 +140,8 @@ def setup():
     sudo('service nginx start')
 
     # ensure that www-data has access to the application folder
-    sudo('chmod -R 770 /var/www/odac-ford-housing')
-    sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
+    sudo('chmod -R 770 ' + env.code_dir)
+    sudo('chown -R www-data:www-data ' + env.code_dir)
     return
 
 
@@ -159,14 +159,14 @@ def configure():
 
     # upload nginx server blocks (virtualhost)
     put(env['config_dir'] + '/nginx.conf', '/tmp/nginx.conf')
-    sudo('mv /tmp/nginx.conf /var/www/odac-ford-housing/nginx.conf')
+    sudo('mv /tmp/nginx.conf %s/nginx.conf' % env.code_dir)
 
     with settings(warn_only=True):
-        sudo('ln -s /var/www/odac-ford-housing/nginx.conf /etc/nginx/conf.d/')
+        sudo('ln -s %s/nginx.conf /etc/nginx/conf.d/' % env.code_dir)
 
     # upload uwsgi config
     put(env['config_dir'] + '/uwsgi.ini', '/tmp/uwsgi.ini')
-    sudo('mv /tmp/uwsgi.ini /var/www/odac-ford-housing/uwsgi.ini')
+    sudo('mv /tmp/uwsgi.ini %s/uwsgi.ini' % env.code_dir)
 
     # make directory for uwsgi's log
     with settings(warn_only=True):
@@ -181,18 +181,18 @@ def configure():
 
     with settings(warn_only=True):
         # create symlinks for emperor to find config file
-        sudo('ln -s /var/www/odac-ford-housing/uwsgi.ini /etc/uwsgi/vassals')
+        sudo('ln -s %s/uwsgi.ini /etc/uwsgi/vassals' % env.code_dir)
 
     # upload flask config
     with settings(warn_only=True):
-        sudo('mkdir /var/www/odac-ford-housing/instance')
+        sudo('mkdir %s/instance' % env.code_dir)
     put(env['config_dir'] + '/config.py', '/tmp/config.py')
-    sudo('mv /tmp/config.py /var/www/odac-ford-housing/instance/config.py')
+    sudo('mv /tmp/config.py %s/instance/config.py' % env.code_dir)
     put(env['config_dir'] + '/config_private.py', '/tmp/config_private.py')
-    sudo('mv /tmp/config_private.py /var/www/odac-ford-housing/instance/config_private.py')
+    sudo('mv /tmp/config_private.py %s/instance/config_private.py' % env.code_dir)
 
     sudo('chown -R www-data:www-data /var/log/uwsgi')
-    sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
+    sudo('chown -R www-data:www-data ' + env.code_dir)
 
     restart()
     return
@@ -213,7 +213,7 @@ def deploy():
         sudo('service nginx stop')
 
     # enter application directory
-    with cd('/var/www/odac-ford-housing'):
+    with cd(env.code_dir):
         # and unzip new files
         sudo('tar xzf /tmp/msg_handler.tar.gz')
 
@@ -221,18 +221,18 @@ def deploy():
     sudo('rm /tmp/msg_handler.tar.gz')
     local('rm msg_handler.tar.gz')
 
-    sudo('touch /var/www/odac-ford-housing/msg_handler/uwsgi.sock')
+    sudo('touch %s/msg_handler/uwsgi.sock' % env.code_dir)
 
     # clean out old logfiles
     with settings(warn_only=True):
-        sudo('rm /var/www/odac-ford-housing/debug.log*')
+        sudo('rm %s/debug.log*' % env.code_dir)
 
     # ensure notification list exists
-    sudo('touch /var/www/odac-ford-housing/instance/notification_list.json')
+    sudo('touch %s/instance/notification_list.json' % env.code_dir)
 
     # ensure user www-data has access to the application folder
-    sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
-    sudo('chmod -R 775 /var/www/odac-ford-housing')
+    sudo('chown -R www-data:www-data ' + env.code_dir)
+    sudo('chmod -R 775 ' + env.code_dir)
 
     # and finally reload the application
     restart()
@@ -246,11 +246,11 @@ def upload_db():
 
     # upload db
     put('instance/ford-housing.db', '/tmp/ford-housing.db')
-    sudo('mv /tmp/ford-housing.db /var/www/odac-ford-housing/instance/ford-housing.db')
+    sudo('mv /tmp/ford-housing.db %s/instance/ford-housing.db' % env.code_dir)
 
     # ensure user www-data has access to the application folder
-    sudo('chown -R www-data:www-data /var/www/odac-ford-housing')
-    sudo('chmod -R 775 /var/www/odac-ford-housing')
+    sudo('chown -R www-data:www-data ' + env.code_dir)
+    sudo('chmod -R 775 ' + env.code_dir)
     return
 
 
@@ -259,5 +259,5 @@ def download_db():
     Overwrite the local db with a copy from the server.
     """
 
-    get('/var/www/odac-ford-housing/instance/ford-housing.db', 'instance/ford-housing.db')
+    get('%s/instance/ford-housing.db' % env.code_dir, 'instance/ford-housing.db')
     return
