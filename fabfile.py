@@ -42,7 +42,7 @@ def install_redis():
     http://redis.io/topics/quickstart
     """
     sudo('apt-get install tcl8.5')
-    with cd(env['code_dir']):
+    with cd(env.code_dir):
         sudo('wget http://download.redis.io/redis-stable.tar.gz')
         sudo('tar xvzf redis-stable.tar.gz')
         with cd('redis-stable'):
@@ -96,6 +96,16 @@ def restart():
     return
 
 
+def set_permissions():
+    """
+     Ensure that www-data has access to the application folder
+    """
+
+    sudo('chmod -R 775 ' + env.code_dir)
+    sudo('chown -R www-data:www-data ' + env.code_dir)
+    return
+
+
 def setup():
     """
     Install dependencies and create an application directory.
@@ -114,18 +124,14 @@ def setup():
 
     # create application directory if it doesn't exist yet
     with settings(warn_only=True):
-        if run("test -d %s" % env['code_dir']).failed:
+        if run("test -d %s" % env.code_dir).failed:
             # create project folder
             sudo('mkdir -p ' + env.code_dir)
             sudo('mkdir -p %s/msg_handler' % env.code_dir)
             sudo('mkdir %s/instance' % env.code_dir)
-        if run("test -d %s/env" % env['code_dir']).failed:
+        if run("test -d %s/env" % env.code_dir).failed:
             # create virtualenv
-            sudo('virtualenv --no-site-packages %s/env' % env['code_dir'])
-
-    # clear pip's cache
-    with settings(warn_only=True):
-        sudo('rm -r /tmp/pip-build-root')
+            sudo('virtualenv --no-site-packages %s/env' % env.code_dir)
 
     # install the necessary Python packages
     with virtualenv():
@@ -139,9 +145,7 @@ def setup():
     sudo('update-rc.d nginx defaults')
     sudo('service nginx start')
 
-    # ensure that www-data has access to the application folder
-    sudo('chmod -R 770 ' + env.code_dir)
-    sudo('chown -R www-data:www-data ' + env.code_dir)
+    set_permissions()
     return
 
 
@@ -158,25 +162,26 @@ def configure():
         sudo('rm /etc/nginx/sites-enabled/default')
 
     # upload nginx server blocks (virtualhost)
-    put(env['config_dir'] + '/nginx.conf', '/tmp/nginx.conf')
+    put(env.config_dir + '/nginx.conf', '/tmp/nginx.conf')
     sudo('mv /tmp/nginx.conf %s/nginx.conf' % env.code_dir)
 
     with settings(warn_only=True):
         sudo('ln -s %s/nginx.conf /etc/nginx/conf.d/' % env.code_dir)
 
     # upload uwsgi config
-    put(env['config_dir'] + '/uwsgi.ini', '/tmp/uwsgi.ini')
+    put(env.config_dir + '/uwsgi.ini', '/tmp/uwsgi.ini')
     sudo('mv /tmp/uwsgi.ini %s/uwsgi.ini' % env.code_dir)
 
     # make directory for uwsgi's log
     with settings(warn_only=True):
         sudo('mkdir -p /var/log/uwsgi')
+        sudo('chown -R www-data:www-data /var/log/uwsgi')
 
     with settings(warn_only=True):
         sudo('mkdir -p /etc/uwsgi/vassals')
 
     # upload upstart configuration for uwsgi 'emperor', which spawns uWSGI processes
-    put(env['config_dir'] + '/uwsgi.conf', '/tmp/uwsgi.conf')
+    put(env.config_dir + '/uwsgi.conf', '/tmp/uwsgi.conf')
     sudo('mv /tmp/uwsgi.conf /etc/init/uwsgi.conf')
 
     with settings(warn_only=True):
@@ -186,14 +191,12 @@ def configure():
     # upload flask config
     with settings(warn_only=True):
         sudo('mkdir %s/instance' % env.code_dir)
-    put(env['config_dir'] + '/config.py', '/tmp/config.py')
+    put(env.config_dir + '/config.py', '/tmp/config.py')
     sudo('mv /tmp/config.py %s/instance/config.py' % env.code_dir)
-    put(env['config_dir'] + '/config_private.py', '/tmp/config_private.py')
+    put(env.config_dir + '/config_private.py', '/tmp/config_private.py')
     sudo('mv /tmp/config_private.py %s/instance/config_private.py' % env.code_dir)
 
-    sudo('chown -R www-data:www-data /var/log/uwsgi')
-    sudo('chown -R www-data:www-data ' + env.code_dir)
-
+    set_permissions()
     restart()
     return
 
@@ -230,11 +233,7 @@ def deploy():
     # ensure notification list exists
     sudo('touch %s/instance/notification_list.json' % env.code_dir)
 
-    # ensure user www-data has access to the application folder
-    sudo('chown -R www-data:www-data ' + env.code_dir)
-    sudo('chmod -R 775 ' + env.code_dir)
-
-    # and finally reload the application
+    set_permissions()
     restart()
     return
 
@@ -248,9 +247,7 @@ def upload_db():
     put('instance/ford-housing.db', '/tmp/ford-housing.db')
     sudo('mv /tmp/ford-housing.db %s/instance/ford-housing.db' % env.code_dir)
 
-    # ensure user www-data has access to the application folder
-    sudo('chown -R www-data:www-data ' + env.code_dir)
-    sudo('chmod -R 775 ' + env.code_dir)
+    set_permissions()
     return
 
 
