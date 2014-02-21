@@ -27,6 +27,34 @@ Run Flask dev server:
     python runserver.py
 
 
+Deploy the application via fabric:
+----------------------------------
+Install fabric
+
+    pip install fabric
+
+Setup application folder, and install requirements
+
+    fab production setup
+
+Install Redis (note: this reboots the server)
+
+    fab production install_redis
+
+Configure Nginx, supervisor, gunicorn & Flask
+
+    fab production configure
+
+Deploy application package
+
+    fab production deploy
+
+Initiate an empty db
+
+    fab production rebuild_db
+
+
+
 NOTES:
 ------
 To access this server via SSH:
