@@ -4,6 +4,14 @@ from fabric.contrib.console import confirm
 from contextlib import contextmanager
 
 
+def common():
+    """
+    Common environment parameters
+    """
+
+    env.activate = 'source %s/env/bin/activate' % env.code_dir
+    return
+
 def staging():
     """
     Env parameters for the staging environment.
@@ -15,7 +23,9 @@ def staging():
     env.key_filename = '~/.ssh/aws_code4sa.pem'
     env.code_dir = '/var/www/odac-ford-housing'
     env.config_dir = 'config_staging'
+    common()
     print("STAGING ENVIRONMENT\n")
+    return
 
 
 def production():
@@ -27,10 +37,9 @@ def production():
     env.envname = 'production'
     env.code_dir = '/var/www/ford-housing.code4sa.org'
     env.config_dir = 'config_production'
+    common()
     print("PRODUCTION ENVIRONMENT\n")
-
-# Common environment parameters
-env.activate = 'source %s/env/bin/activate' % env.code_dir
+    return
 
 
 @contextmanager
@@ -105,7 +114,6 @@ def restart():
 
     with settings(warn_only=True):
         sudo('service nginx restart')
-        sudo('service uwsgi restart')
     return
 
 
@@ -164,11 +172,8 @@ def setup():
 
 def configure():
     """
-    Configure uwsgi, Nginx & Flask. Then restart.
+    Configure Nginx & Flask. Then restart.
     """
-
-    with settings(warn_only=True):
-        sudo('stop uwsgi')
 
     with settings(warn_only=True):
         # disable default site
@@ -180,26 +185,6 @@ def configure():
 
     with settings(warn_only=True):
         sudo('ln -s %s/nginx.conf /etc/nginx/conf.d/' % env.code_dir)
-
-    # upload uwsgi config
-    put(env.config_dir + '/uwsgi.ini', '/tmp/uwsgi.ini')
-    sudo('mv /tmp/uwsgi.ini %s/uwsgi.ini' % env.code_dir)
-
-    # make directory for uwsgi's log
-    with settings(warn_only=True):
-        sudo('mkdir -p /var/log/uwsgi')
-        sudo('chown -R www-data:www-data /var/log/uwsgi')
-
-    with settings(warn_only=True):
-        sudo('mkdir -p /etc/uwsgi/vassals')
-
-    # upload upstart configuration for uwsgi 'emperor', which spawns uWSGI processes
-    put(env.config_dir + '/uwsgi.conf', '/tmp/uwsgi.conf')
-    sudo('mv /tmp/uwsgi.conf /etc/init/uwsgi.conf')
-
-    with settings(warn_only=True):
-        # create symlinks for emperor to find config file
-        sudo('ln -s %s/uwsgi.ini /etc/uwsgi/vassals' % env.code_dir)
 
     # upload flask config
     with settings(warn_only=True):
@@ -237,7 +222,7 @@ def deploy():
     sudo('rm /tmp/msg_handler.tar.gz')
     local('rm msg_handler.tar.gz')
 
-    sudo('touch %s/msg_handler/uwsgi.sock' % env.code_dir)
+    sudo('touch %s/msg_handler/gunicorn.sock' % env.code_dir)
 
     # clean out old logfiles
     with settings(warn_only=True):
