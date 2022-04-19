@@ -1,6 +1,6 @@
 Flask
 simplejson
-requests==2.0.1
+requests==2.20.0
 redis
 hiredis
 SQLAlchemy==0.8.2
