@@ -5,5 +5,5 @@ redis
 hiredis
 SQLAlchemy==0.8.2
 Flask-SQLAlchemy==1.0
-Flask-Admin==1.0.7
+Flask-Admin==1.5.3
 Flask-Login==0.2.7
